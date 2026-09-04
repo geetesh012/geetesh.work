@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+}
+
+@font-face {
+  font-family: 'Harmond';
+  src: url('/fonts/Harmond - Free For Personal Use/Harmond-SemiBoldCondensed.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: condensed;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Harmond';
+  src: url('/fonts/Harmond - Free For Personal Use/Harmond-SemBdItaCond.otf') format('opentype');
+  font-weight: 600;
+  font-style: italic;
+  font-stretch: condensed;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Harmond';
+  src: url('/fonts/Harmond - Free For Personal Use/Harmond-ExtraBoldExpanded.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-stretch: expanded;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Harmond';
+  src: url('/fonts/Harmond - Free For Personal Use/Harmond-ExtBdItaExp.otf') format('opentype');
+  font-weight: 800;
+  font-style: italic;
+  font-stretch: expanded;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Ranade';
+  src: url('/fonts/body-font/Fonts/WEB/fonts/Ranade-Variable.woff2') format('woff2-variations'),
+       url('/fonts/body-font/Fonts/WEB/fonts/Ranade-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Ranade';
+  src: url('/fonts/body-font/Fonts/WEB/fonts/Ranade-VariableItalic.woff2') format('woff2-variations'),
+       url('/fonts/body-font/Fonts/WEB/fonts/Ranade-VariableItalic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans JP';
+  src: url('/fonts/japanese/NotoSansJP-subset.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
