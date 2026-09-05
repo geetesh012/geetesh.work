@@ -1,8 +1,8 @@
 export default function About() {
   return (
     <section id="about">
-      <div className="relative min-h-screen overflow-x-hidden bg-[#0a0908] text-[#f2efe9] font-body">
-        <div className="relative mx-auto max-w-[1600px] overflow-hidden px-6 pt-10 pb-16 md:px-14 md:pt-10 md:pb-16">
+      <div className="group relative min-h-screen overflow-x-hidden bg-[#0a0908] text-[#f2efe9] font-body">
+        <div className="relative mx-auto max-w-[1600px] overflow-hidden px-6 pt-10 pb-32 md:px-14 md:pt-10 md:pb-40">
           {/* Dragon background art */}
           <img
             src="/about/dragon-filled.png"
@@ -17,6 +17,10 @@ export default function About() {
             select-none
             opacity-[0.32]
             saturate-[1.1]
+            transition-opacity
+            duration-700
+            ease-out
+            group-hover:opacity-[0.15]
             md:right-[-6%]
           "
           />
@@ -32,8 +36,12 @@ export default function About() {
             z-0
             w-[min(74vw,1180px)]
             select-none
-            opacity-[0.55]
+            opacity-0
             mix-blend-screen
+            transition-opacity
+            duration-700
+            ease-out
+            group-hover:opacity-100
           "
           />
 
@@ -216,50 +224,7 @@ export default function About() {
             </div>
           </div>
         </div>
-
-        {/* Floating action button */}
-        <button
-          type="button"
-          aria-label="Toggle sound"
-          className="
-    fixed
-    bottom-7
-    left-[-28px]
-    z-20
-    flex
-    h-16
-    w-16
-    items-center
-    justify-center
-    rounded-full
-    border
-    border-[#635e58]
-    bg-[#0a0908]
-    text-[#f2efe9]
-    transition-all
-    duration-300
-    hover:border-[#d13a3a]
-    hover:text-[#d13a3a]
-  "
-        >
-          {/* Sound On icon */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="ml-[30px] h-5 w-5"
-          >
-            <path d="M11 5 6 9H3v6h3l5 4V5Z" />
-            <path d="M15.5 8.5a5 5 0 0 1 0 7" />
-            <path d="M18.5 5.5a9 9 0 0 1 0 13" />
-          </svg>
-        </button>
       </div>
     </section>
-    
   );
 }
