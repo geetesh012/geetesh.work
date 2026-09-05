@@ -9,17 +9,12 @@ const ENTRANCE =
   "transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]";
 
 export default function Navbar({
-  scrolled,
   mounted,
   overlayOpen,
   onToggleOverlay,
 }: NavbarProps) {
   return (
-    <nav
-      className={`absolute top-0 left-0 w-full z-50 transition-colors duration-500 ${
-        scrolled ? "bg-black/80 backdrop-blur-md" : "bg-transparent"
-      }`}
-    >
+    <nav className="absolute top-0 left-0 w-full z-50 bg-transparent">
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 flex items-center justify-between h-16 md:h-20">
         {/* Left — logo, two-line stacked */}
         <a

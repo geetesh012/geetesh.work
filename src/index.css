@@ -8,6 +8,15 @@
   box-sizing: border-box;
 }
 
+:root {
+  --about-red: #dc2626;
+}
+
+body.custom-cursor-active,
+body.custom-cursor-active * {
+  cursor: none !important;
+}
+
 html,
 body {
   overflow-x: hidden;
@@ -53,6 +62,10 @@ body {
   font-display: swap;
 }
 
+/* Ranade — structure / interface. Variable font: one file covers
+   the whole weight range, so a single @font-face with a weight
+   range replaces the four static Fontshare CDN weights. */
+
 @font-face {
   font-family: 'Ranade';
   src: url('/fonts/body-font/Fonts/WEB/fonts/Ranade-Variable.woff2') format('woff2-variations'),
@@ -70,6 +83,11 @@ body {
   font-style: italic;
   font-display: swap;
 }
+
+/* Noto Sans JP — body / utility. Self-hosted subset (replaces the
+   Google Fonts CDN link). Verify the actual weight(s) baked into
+   this subset file — adjust font-weight below if it's a single
+   static cut rather than a variable range. */
 
 @font-face {
   font-family: 'Noto Sans JP';
