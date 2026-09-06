@@ -1,13 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 
-// Elements that trigger the "engaged" resting-dot state.
-const HOVER_SELECTOR = 'a, button, [data-cursor-hover]';
 
-// How long (ms) a captured point stays part of the trail before it's
-// dropped. This is what makes the slash vanish almost immediately once
-// the cursor stops moving — no new points come in, and old ones age out.
-const TRAIL_MAX_AGE = 160;
-const MAX_POINTS = 24;
+const HOVER_SELECTOR = 'a, button, [data-cursor-hover]';
+const TRAIL_MAX_AGE = 320;
+const MAX_POINTS = 32;
+const BLADE_WIDTH = 7; // px, at the newest (widest) end of the ribbon
+const SPARK_LIFETIME = 260;
+
+// Brand red — matches the accent already used in OverlayMenu (#B91729),
+// not a generic red, so the cursor reads as part of the same system.
+const BRAND_RED: [number, number, number] = [185, 23, 41];
+const CORE_COLOR: [number, number, number] = [253, 246, 243]; // warm near-white
 
 interface Point {
   x: number;
@@ -15,10 +18,40 @@ interface Point {
   t: number;
 }
 
+interface Spark {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  born: number;
+}
+
+function smooth(points: Point[]): Point[] {
+  if (points.length < 3) return points;
+  const out: Point[] = [points[0]];
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i];
+    const p1 = points[i + 1];
+    out.push({
+      x: p0.x * 0.75 + p1.x * 0.25,
+      y: p0.y * 0.75 + p1.y * 0.25,
+      t: p0.t * 0.75 + p1.t * 0.25,
+    });
+    out.push({
+      x: p0.x * 0.25 + p1.x * 0.75,
+      y: p0.y * 0.25 + p1.y * 0.75,
+      t: p0.t * 0.25 + p1.t * 0.75,
+    });
+  }
+  out.push(points[points.length - 1]);
+  return out;
+}
+
 export default function CustomCursor() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
   const points = useRef<Point[]>([]);
+  const sparks = useRef<Spark[]>([]);
   const rafRef = useRef<number | null>(null);
 
   const [enabled] = useState(() => window.matchMedia('(pointer: fine)').matches);
@@ -53,9 +86,30 @@ export default function CustomCursor() {
     };
 
     const onMove = (e: MouseEvent) => {
-      points.current.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+      const now = performance.now();
+      const prev = points.current[points.current.length - 1];
+      points.current.push({ x: e.clientX, y: e.clientY, t: now });
       applyDotTransform(e.clientX, e.clientY);
       dot.style.opacity = '1';
+
+      // Throw off a spark or two when moving fast, from the leading point.
+      if (prev) {
+        const dist = Math.hypot(e.clientX - prev.x, e.clientY - prev.y);
+        if (dist > 18 && sparks.current.length < 14) {
+          const count = Math.min(2, Math.floor(dist / 18));
+          for (let i = 0; i < count; i++) {
+            const spread = (Math.random() - 0.5) * Math.PI * 1.4;
+            const speed = 0.6 + Math.random() * 1.2;
+            sparks.current.push({
+              x: e.clientX,
+              y: e.clientY,
+              vx: Math.cos(spread) * speed,
+              vy: Math.sin(spread) * speed,
+              born: now,
+            });
+          }
+        }
+      }
     };
 
     const onMouseOver = (e: MouseEvent) => {
@@ -85,31 +139,101 @@ export default function CustomCursor() {
       if (points.current.length > MAX_POINTS) {
         points.current = points.current.slice(points.current.length - MAX_POINTS);
       }
+      sparks.current = sparks.current.filter((s) => now - s.born < SPARK_LIFETIME);
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const pts = points.current;
-      for (let i = 1; i < pts.length; i++) {
-        const p0 = pts[i - 1];
-        const p1 = pts[i];
-        const age = (now - p1.t) / TRAIL_MAX_AGE; // 0 = just captured, 1 = about to vanish
+      const raw = points.current;
+
+      if (raw.length > 2) {
+        const pts = smooth(raw);
+
+        const meta = pts.map((p) => {
+          const age = Math.min(1, Math.max(0, (now - p.t) / TRAIL_MAX_AGE));
+          const alpha = 1 - age;
+          return { ...p, alpha, width: (BLADE_WIDTH * alpha * 0.5) };
+        });
+
+        const normalAt = (i: number) => {
+          const prev = meta[Math.max(0, i - 1)];
+          const next = meta[Math.min(meta.length - 1, i + 1)];
+          const dx = next.x - prev.x;
+          const dy = next.y - prev.y;
+          const len = Math.hypot(dx, dy) || 1;
+          return { nx: -dy / len, ny: dx / len };
+        };
+
+        // --- Single continuous tapered ribbon (one filled path, no
+        // per-segment seams), coloured by a gradient running tail
+        // (transparent brand red) to head (warm hot-white edge).
+        const left: { x: number; y: number }[] = [];
+        const right: { x: number; y: number }[] = [];
+        for (let i = 0; i < meta.length; i++) {
+          const p = meta[i];
+          if (p.alpha <= 0.02) continue;
+          const { nx, ny } = normalAt(i);
+          left.push({ x: p.x + nx * p.width, y: p.y + ny * p.width });
+          right.push({ x: p.x - nx * p.width, y: p.y - ny * p.width });
+        }
+
+        if (left.length > 1) {
+          ctx.beginPath();
+          ctx.moveTo(left[0].x, left[0].y);
+          for (let i = 1; i < left.length; i++) ctx.lineTo(left[i].x, left[i].y);
+          for (let i = right.length - 1; i >= 0; i--) ctx.lineTo(right[i].x, right[i].y);
+          ctx.closePath();
+
+          const tail = meta[0];
+          const head = meta[meta.length - 1];
+          const headAlpha = head.alpha;
+          const grad = ctx.createLinearGradient(tail.x, tail.y, head.x, head.y);
+          grad.addColorStop(0, `rgba(${BRAND_RED.join(',')},0)`);
+          grad.addColorStop(0.4, `rgba(${BRAND_RED.join(',')},${0.5 * headAlpha})`);
+          grad.addColorStop(1, `rgba(${CORE_COLOR.join(',')},${0.9 * headAlpha})`);
+
+          ctx.fillStyle = grad;
+          ctx.shadowColor = `rgba(${BRAND_RED.join(',')},0.45)`;
+          ctx.shadowBlur = 5;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+
+        // --- Bright glint core: thin stroke over just the freshest
+        // portion of the smoothed curve, for a hot leading edge.
+        ctx.beginPath();
+        let started = false;
+        const glintStart = Math.max(0, Math.floor(meta.length * 0.6));
+        for (let i = glintStart; i < meta.length; i++) {
+          const p = meta[i];
+          if (p.alpha < 0.45) continue;
+          if (!started) {
+            ctx.moveTo(p.x, p.y);
+            started = true;
+          } else {
+            ctx.lineTo(p.x, p.y);
+          }
+        }
+        if (started) {
+          ctx.strokeStyle = `rgba(${CORE_COLOR.join(',')},0.9)`;
+          ctx.lineWidth = 1.3;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.stroke();
+        }
+      }
+
+      // --- Ember sparks flung off the blade tip on fast movement.
+      for (const s of sparks.current) {
+        const age = (now - s.born) / SPARK_LIFETIME;
         const alpha = Math.max(0, 1 - age);
         if (alpha <= 0) continue;
-
-        // White-hot when fresh, fading toward red as it ages — a blade
-        // edge cooling from the cut.
-        const g = Math.round(255 * (1 - age));
-        const b = Math.round(255 * (1 - age));
-
+        const x = s.x + s.vx * (now - s.born) * 0.18;
+        const y = s.y + s.vy * (now - s.born) * 0.18;
+        const color = age < 0.5 ? CORE_COLOR : BRAND_RED;
         ctx.beginPath();
-        ctx.moveTo(p0.x, p0.y);
-        ctx.lineTo(p1.x, p1.y);
-        ctx.strokeStyle = `rgba(255, ${g}, ${b}, ${alpha})`;
-        ctx.lineWidth = Math.max(0.5, 3 * alpha);
-        ctx.lineCap = 'round';
-        ctx.shadowColor = 'rgba(220, 38, 38, 0.7)';
-        ctx.shadowBlur = 4;
-        ctx.stroke();
+        ctx.arc(x, y, Math.max(0.4, 1.3 * alpha), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${color.join(',')},${alpha})`;
+        ctx.fill();
       }
 
       rafRef.current = requestAnimationFrame(draw);
@@ -137,7 +261,7 @@ export default function CustomCursor() {
         className="cursor-dot fixed top-0 left-0 z-[100] pointer-events-none w-2 h-2 rounded-full bg-white opacity-0 transition-opacity duration-200"
         style={{
           transform: 'translate3d(-100px, -100px, 0) translate(-50%, -50%)',
-          boxShadow: '0 0 5px 1px var(--about-red)',
+          boxShadow: '0 0 5px 1px #B91729',
         }}
       />
     </>
