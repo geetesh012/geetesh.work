@@ -1,17 +1,22 @@
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import FoxScrollSequence from "./Foxscrollsequence";
 import { usePinnedSection } from "./Usesectionpin";
 
 interface ScrollPanelProps {
   title: string;
   items: string[];
+  to: string;
 }
 
-function ScrollPanel({ title, items }: ScrollPanelProps) {
+function ScrollPanel({ title, items, to }: ScrollPanelProps) {
   return (
-    <div
+    <Link
+      to={to}
+      aria-label={`View all ${title.toLowerCase()}`}
       className="
-        relative w-[330px] shrink-0
+        group relative block w-[330px] shrink-0
+        text-inherit no-underline
         sm:w-[330px]
         md:w-[332px]
         lg:w-[334px]
@@ -25,6 +30,8 @@ function ScrollPanel({ title, items }: ScrollPanelProps) {
         className="
           block h-auto w-full
           select-none pointer-events-none
+          transition-transform duration-300 ease-out
+          group-hover:scale-[1.02]
         "
         draggable={false}
       />
@@ -90,7 +97,7 @@ function ScrollPanel({ title, items }: ScrollPanelProps) {
           ))}
         </ol>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -283,7 +290,7 @@ export default function Work() {
               {/* ===================================================
                   PROJECTS
               =================================================== */}
-              <ScrollPanel title="Projects" items={PROJECTS} />
+              <ScrollPanel title="Projects" items={PROJECTS} to="/projects" />
 
               {/* ===================================================
                   FOX
@@ -313,7 +320,7 @@ export default function Work() {
               {/* ===================================================
                   EXPERIENCE
               =================================================== */}
-              <ScrollPanel title="Experience" items={EXPERIENCE} />
+              <ScrollPanel title="Experience" items={EXPERIENCE} to="/experience" />
             </div>
           </div>
         </div>
