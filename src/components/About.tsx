@@ -145,7 +145,7 @@ export default function About() {
               <p className="mb-7 font-body text-[clamp(1.15rem,1.8vw,1.5rem)] font-medium leading-[1.5] text-[#f2efe9]">
                 Frontend Developer. Based In{" "}
                 <span className="text-[#d13a3a]">India.</span> Survived 4 Years
-                Of School, Mastered 1 Years Of Frontend Sorcery. Still
+                Of College, Mastered 1 Years Of Frontend Sorcery. Still
                 Exploring, <span className="text-[#d13a3a]">Still Me.</span>
               </p>
 
