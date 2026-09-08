@@ -12,9 +12,10 @@ interface ExperienceEntry {
 const EXPERIENCE: ExperienceEntry[] = [
   {
     company: "GEL",
-    role: "Add your role",
-    duration: "Add dates",
-    description: "Add a short description of what you did here.",
+    role: "Implementation Engineer",
+    duration: "Jan 2026 – May 2026",
+    description: "Managed and validated government service portal Change Requests for the GoaOnline e-Governance project, coordinating requirements with multiple state departments, collaborating with development teams to communicate approved changes and track issues through JIRA, and conducting client-side testing to verify implementations, demonstrate updates to stakeholders, and ensure timely delivery and approval.",
+    image: "/images/experience/GEL-logo.png",
   },
   {
     company: "HUMAWINGS PVT. LTD.",
