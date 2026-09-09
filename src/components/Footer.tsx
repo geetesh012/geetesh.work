@@ -32,7 +32,7 @@ const LINKS: LinkRow[] = [
 export default function Footer() {
   return (
     <section id="contact">
-    <footer className="bg-[#B91729] px-6 md:px-10 py-16 md:py-20">
+    <footer className="bg-[#D52F23] px-6 md:px-10 py-16 md:py-20">
       <div className="max-w-[1440px] mx-auto">
         <div className="bg-[#180503] rounded-md overflow-hidden">
           {/* header row */}

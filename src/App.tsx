@@ -11,14 +11,18 @@ import SoundToggle from './components/Soundtoggletoggle';
 import CustomCursor from './components/Customcursor';
 import ProjectsPage from './pages/ProjectsPage';
 import ExperiencePage from './pages/ExperiencePage';
+import FearSection from './components/Fearsection';
+import SamuraiSection from './components/Samuraisection';
 
 function HomePage() {
   return (
     <>
       <Landing />
       <Manifesto />
+      <FearSection/>
       <About />
       <Work />
+      <SamuraiSection/>
       <Footer />
     </>
   );

@@ -45,7 +45,7 @@ const EXPERIENCE: ExperienceEntry[] = [
 
 export default function ExperiencePage() {
   return (
-    <main className="relative min-h-screen w-full overflow-hidden bg-white px-6 py-10 md:px-10 md:py-14">
+    <main className="relative min-h-screen w-full overflow-hidden bg-[#FAFAFA] px-6 py-10 md:px-10 md:py-14">
       <FallingBlossoms />
 
       {/* Left blossom — matches the backdrop used in the Work section */}
