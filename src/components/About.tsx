@@ -7,6 +7,7 @@ export default function About() {
           <img
             src="/about/dragon-filled.png"
             alt=""
+            aria-hidden="true"
             className="
             pointer-events-none
             absolute
@@ -28,6 +29,7 @@ export default function About() {
           <img
             src="/about/dragon-skitched.png"
             alt=""
+            aria-hidden="true"
             className="
             pointer-events-none
             absolute

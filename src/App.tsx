@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { startSmoothScroll } from './lib/SmoothScroll';
 import SamuraiPreloader from './components/Samuraipreloader';
@@ -9,10 +9,13 @@ import Work from './components/Work';
 import Footer from './components/Footer';
 import SoundToggle from './components/Soundtoggletoggle';
 import CustomCursor from './components/Customcursor';
-import ProjectsPage from './pages/ProjectsPage';
-import ExperiencePage from './pages/ExperiencePage';
 import FearSection from './components/Fearsection';
 import SamuraiSection from './components/Samuraisection';
+
+// Routed pages are only needed once the user navigates to them, so they're
+// split into their own chunks instead of being bundled into the initial load.
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
+const ExperiencePage = lazy(() => import('./pages/ExperiencePage'));
 
 function HomePage() {
   return (
@@ -38,11 +41,13 @@ export default function App() {
       <SamuraiPreloader siteName="GEETESH KANKONKAR" tagline="PORTFOLIO · EST. 2026" />
       <CustomCursor />
       <SoundToggle />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/projects" element={<ProjectsPage />} />
-        <Route path="/experience" element={<ExperiencePage />} />
-      </Routes>
+      <Suspense fallback={null}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/experience" element={<ExperiencePage />} />
+        </Routes>
+      </Suspense>
     </>
   );
 }
