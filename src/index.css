@@ -22,6 +22,23 @@ body {
   overflow-x: hidden;
 }
 
+/* `h-screen`/`min-h-screen` resolve to CSS `100vh`, which on mobile browsers
+   is measured against the *largest* possible viewport (address bar hidden).
+   That causes full-height sections to overflow or visibly jump as the
+   address bar shows/hides during scroll — most noticeable in the pinned
+   sections here, which also measure `window.innerHeight` in JS for scroll
+   math, so the two can drift apart. `dvh` tracks the real visible viewport
+   instead; fall back to the existing `vh` behavior where it's unsupported. */
+@supports (height: 100dvh) {
+  .h-screen {
+    height: 100dvh;
+  }
+
+  .min-h-screen {
+    min-height: 100dvh;
+  }
+}
+
 body {
   font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
 }

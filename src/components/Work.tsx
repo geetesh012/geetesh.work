@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { Link } from "react-router-dom";
 import FoxScrollSequence from "./Foxscrollsequence";
 import { usePinnedSection } from "./Usesectionpin";
+import { useMediaQuery } from "../lib/Usemediaquery";
 
 interface ScrollPanelProps {
   title: string;
@@ -15,9 +16,9 @@ function ScrollPanel({ title, items, to }: ScrollPanelProps) {
       to={to}
       aria-label={`View all ${title.toLowerCase()}`}
       className="
-        group relative block w-[330px] shrink-0
+        group relative block w-[min(78vw,300px)] shrink-0
         text-inherit no-underline
-        sm:w-[330px]
+        sm:w-[300px]
         md:w-[332px]
         lg:w-[334px]
       "
@@ -114,17 +115,25 @@ const PIN_LENGTH_VH = 320;
 
 export default function Work() {
   const pinRef = useRef<HTMLElement>(null);
-  const pinStyle = usePinnedSection(pinRef);
+  // Below md the three panels stack instead of sitting in a pinned row, so
+  // there's no fixed-height "frame" to scroll-jack through — pinning (and
+  // the tall spacer section it needs) is desktop-only.
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const pinStyle = usePinnedSection(pinRef, isDesktop);
 
   return (
     <section
       id="work"
       ref={pinRef}
       className="relative w-full bg-white"
-      style={{ height: `${PIN_LENGTH_VH}vh` }}
+      style={{ height: isDesktop ? `${PIN_LENGTH_VH}vh` : "auto" }}
     >
       <div
-        className="flex h-screen w-full flex-col overflow-hidden"
+        className={
+          isDesktop
+            ? "flex h-screen w-full flex-col overflow-hidden"
+            : "flex w-full flex-col py-16"
+        }
         style={pinStyle}
       >
         {/* =========================================================
@@ -280,9 +289,11 @@ export default function Work() {
                 flex
                 w-full
                 max-h-full
+                flex-col
                 items-center
                 justify-center
                 gap-10
+                md:flex-row
                 md:gap-[56px]
                 lg:gap-[70px]
               "
@@ -306,9 +317,9 @@ export default function Work() {
               >
                 <FoxScrollSequence
                   className="
-                    w-[300px]
+                    w-[min(70vw,300px)]
                     max-h-full
-                    sm:w-[320px]
+                    sm:w-[300px]
                     md:w-[350px]
                     lg:w-[380px]
                   "

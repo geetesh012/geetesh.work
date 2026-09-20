@@ -1,31 +1,19 @@
 import { useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
 
-/**
- * Pins `sectionRef`'s child to the viewport for the section's scroll range,
- * driven from JS instead of `position: sticky`.
- *
- * Why: `position: sticky` silently stops working if ANY ancestor has
- * `overflow` set to anything other than `visible`, or has a CSS `transform`
- * applied to it (which many smooth-scroll libraries — Lenis, Locomotive
- * Scroll, GSAP ScrollSmoother — do to the page wrapper). When that happens
- * the sticky child just scrolls away with the rest of the page instead of
- * pinning. This hook reproduces the same visual result with fixed/absolute
- * positioning, computed every animation frame instead of relying on the
- * browser's sticky algorithm.
- *
- * Note: this still won't pin correctly if an ancestor applies a CSS
- * `transform` for smooth scrolling — `position: fixed` is contained by a
- * transformed ancestor the same way `sticky` is. If you're using Lenis,
- * Locomotive Scroll, or GSAP ScrollSmoother, use that library's own pinning
- * (e.g. GSAP ScrollTrigger's `pin: true`) instead of this hook.
- */
 export function usePinnedSection(
-  sectionRef: RefObject<HTMLElement | null>
+  sectionRef: RefObject<HTMLElement | null>,
+  enabled: boolean = true
 ): CSSProperties {
   const [style, setStyle] = useState<CSSProperties>({ position: "relative" });
   const phaseRef = useRef<"before" | "pinned" | "after">("before");
 
   useEffect(() => {
+    if (!enabled) {
+      phaseRef.current = "before";
+      setStyle({ position: "relative" });
+      return;
+    }
+
     let raf: number;
 
     const update = () => {
@@ -59,7 +47,7 @@ export function usePinnedSection(
 
     raf = requestAnimationFrame(update);
     return () => cancelAnimationFrame(raf);
-  }, [sectionRef]);
+  }, [sectionRef, enabled]);
 
   return style;
 }

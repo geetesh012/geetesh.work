@@ -31,7 +31,7 @@ export default function Hero({ mounted }: HeroProps) {
       {/* Foreground */}
       <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
   <h1
-    className={`font-display font-semibold text-[48px] leading-[0.95] text-white mb-4 md:mb-6 delay-[400ms] ${TEXT_ENTRANCE} ${
+    className={`font-display font-semibold text-hero text-white mb-4 md:mb-6 delay-[400ms] ${TEXT_ENTRANCE} ${
     mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
   }`}
   >
@@ -40,7 +40,7 @@ export default function Hero({ mounted }: HeroProps) {
   </h1>
 
   <p
-    className={`font-display font-medium text-[24px] text-hero-accent text-white/85 delay-[600ms] ${TEXT_ENTRANCE} ${
+    className={`font-display font-medium text-hero-accent text-white/85 delay-[600ms] ${TEXT_ENTRANCE} ${
       mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
     }`}
   >
