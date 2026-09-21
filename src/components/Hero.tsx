@@ -24,7 +24,7 @@ export default function Hero({ mounted }: HeroProps) {
           loop
           playsInline
           ref={(video) => {if (video) {video.playbackRate = 1;}}}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-[75%_center] md:object-center"
         />
       </div>
 
