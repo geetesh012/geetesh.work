@@ -8,6 +8,35 @@
       name="description"
       content="Portfolio of Geetesh Kankonkar, a Designer & frontend developer based in Goa, India, building immersive, motion-driven web interfaces."
     />
+    <link rel="canonical" href="https://geetesh.work/" />
+    <meta name="theme-color" content="#000000" />
+
+    <!--
+      GitHub Pages serves static files only — it can't send custom HTTP
+      response headers, so a meta tag is the only way to set a CSP here.
+      Note the meta-tag form of CSP silently ignores `frame-ancestors`
+      (and there's no meta equivalent for X-Frame-Options or
+      Permissions-Policy at all) — browsers only honor those as real HTTP
+      headers, e.g. via a proxy like Cloudflare in front of Pages.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src 'self' 'wasm-unsafe-eval';
+        worker-src 'self' blob:;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com;
+        img-src 'self' data: blob:;
+        media-src 'self' https://res.cloudinary.com;
+        connect-src 'self' ws: wss: blob:;
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+        upgrade-insecure-requests;
+      "
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />

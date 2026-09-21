@@ -3,6 +3,11 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
+// The model's geometry is Draco-compressed, and drei's default decoder path
+// points at Google's CDN (gstatic.com) — which a same-origin CSP blocks.
+// three ships the same decoder files locally, so self-host them instead of
+// relaxing connect-src to trust a third-party origin.
+useGLTF.setDecoderPath('/draco/');
 useGLTF.preload('/models/sword.glb');
 
 function SwordMesh() {
