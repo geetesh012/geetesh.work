@@ -7,7 +7,7 @@ interface SamuraiScrollSequenceProps {
 
 const FRAME_COUNT = 50;
 const FRAME_PATH = (index: number) =>
-  `/images/samurai-frames/frame-${String(index + 1).padStart(3, '0')}.png`;
+  `/images/samurai-frames/frame-${String(index + 1).padStart(3, '0')}.webp`;
 
 const CONCURRENT_LOADS = 12;
 
